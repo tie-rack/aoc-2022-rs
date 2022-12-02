@@ -2,7 +2,7 @@ use aoc_runner_derive::{aoc, aoc_generator};
 
 #[allow(non_snake_case)]
 mod RPS {
-    #[derive(Debug, PartialEq, Clone, Copy)]
+    #[derive(Debug, PartialEq, Eq, Clone, Copy)]
     pub enum Play {
         Rock,
         Paper,
@@ -11,10 +11,10 @@ mod RPS {
 
     impl Play {
         pub fn score(&self) -> i32 {
-            match &self {
-                &Play::Rock => 1,
-                &Play::Paper => 2,
-                &Play::Scissors => 3,
+            match self {
+                Play::Rock => 1,
+                Play::Paper => 2,
+                Play::Scissors => 3,
             }
         }
     }
@@ -33,7 +33,7 @@ mod RPS {
         }
     }
 
-    #[derive(Debug, PartialEq)]
+    #[derive(Debug, PartialEq, Eq)]
     pub enum Result {
         Win,
         Loss,
@@ -61,7 +61,7 @@ mod RPS {
         }
     }
 
-    #[derive(Debug, PartialEq)]
+    #[derive(Debug, PartialEq, Eq)]
     pub struct Round {
         pub opponent: Play,
         pub me: Play,
@@ -69,7 +69,7 @@ mod RPS {
 
     impl Round {
         pub fn round_result(&self) -> Result {
-            if &self.opponent == &self.me {
+            if self.opponent == self.me {
                 Result::Tie
             } else {
                 match (&self.opponent, &self.me) {
@@ -82,7 +82,7 @@ mod RPS {
         }
 
         pub fn score(&self) -> i32 {
-            &self.me.score() + &self.round_result().score()
+            self.me.score() + self.round_result().score()
         }
     }
 
@@ -153,15 +153,15 @@ pub fn parse_rps_strategy_FINAL(input: &str) -> Vec<RPS::RoundStrategy> {
 }
 
 #[aoc(day2, part1)]
-fn day2part1(rounds: &Vec<RPS::Round>) -> i32 {
+fn day2part1(rounds: &[RPS::Round]) -> i32 {
     rounds.iter().fold(0, |acc, r| acc + r.score())
 }
 
 #[aoc(day2, part2)]
-fn day2part2(rounds: &Vec<RPS::RoundStrategy>) -> i32 {
+fn day2part2(rounds: &[RPS::RoundStrategy]) -> i32 {
     rounds
         .iter()
-        .map(|strat| RPS::Round::from(strat))
+        .map(RPS::Round::from)
         .fold(0, |acc, r| acc + r.score())
 }
 

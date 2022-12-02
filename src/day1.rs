@@ -3,27 +3,27 @@ use aoc_runner_derive::{aoc, aoc_generator};
 #[aoc_generator(day1)]
 pub fn elf_load_generator(input: &str) -> Vec<i32> {
     input.lines().fold(vec![0], |mut acc, l| {
-        if l == "" {
+        if l.is_empty() {
             acc.push(0);
         } else {
             let len = acc.len();
-            acc[len - 1] = acc[len - 1] + l.parse::<i32>().unwrap();
+            acc[len - 1] += l.parse::<i32>().unwrap();
         }
         acc
     })
 }
 
 #[aoc(day1, part1)]
-fn day1part1(loads: &Vec<i32>) -> i32 {
+fn day1part1(loads: &[i32]) -> i32 {
     *loads.iter().max().unwrap()
 }
 
 #[aoc(day1, part2)]
-fn day1part2(loads: &Vec<i32>) -> i32 {
-    let loads = &mut loads.clone();
+fn day1part2(loads: &[i32]) -> i32 {
+    let loads = &mut loads.to_owned();
     loads.sort();
     loads.reverse();
-    loads.iter().take(3).fold(0, |acc, x| acc + x)
+    loads.iter().take(3).sum()
 }
 
 #[cfg(test)]
