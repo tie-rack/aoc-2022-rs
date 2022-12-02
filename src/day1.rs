@@ -2,25 +2,20 @@ use aoc_runner_derive::{aoc, aoc_generator};
 
 #[aoc_generator(day1)]
 pub fn elf_load_generator(input: &str) -> Vec<i32> {
-    input
-        .lines()
-        .fold(vec![0], |mut acc, l| {
-            if l == "" {
-                acc.push(0);
-            } else {
-                let len = acc.len();
-                acc[len - 1] = acc[len - 1] + l.parse::<i32>().unwrap();
-            }
-            acc
-        })
+    input.lines().fold(vec![0], |mut acc, l| {
+        if l == "" {
+            acc.push(0);
+        } else {
+            let len = acc.len();
+            acc[len - 1] = acc[len - 1] + l.parse::<i32>().unwrap();
+        }
+        acc
+    })
 }
 
 #[aoc(day1, part1)]
 fn day1part1(loads: &Vec<i32>) -> i32 {
-    *loads
-        .iter()
-        .max()
-        .unwrap()
+    *loads.iter().max().unwrap()
 }
 
 #[aoc(day1, part2)]
