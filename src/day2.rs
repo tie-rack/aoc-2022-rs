@@ -133,6 +133,7 @@ pub fn parse_rps_strategy(input: &str) -> Vec<RPSRound> {
 }
 
 #[aoc_generator(day2, part2)]
+#[allow(non_snake_case)]
 pub fn parse_rps_strategy_FINAL(input: &str) -> Vec<RPSRoundStrategy> {
     input
         .lines()
