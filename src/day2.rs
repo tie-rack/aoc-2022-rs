@@ -10,7 +10,7 @@ mod RPS {
     }
 
     impl Play {
-        pub fn score(&self) -> i32 {
+        pub fn score(self) -> i32 {
             match self {
                 Play::Rock => 1,
                 Play::Paper => 2,
@@ -22,12 +22,9 @@ mod RPS {
     impl From<&str> for Play {
         fn from(s: &str) -> Self {
             match s {
-                "A" => Play::Rock,
-                "B" => Play::Paper,
-                "C" => Play::Scissors,
-                "X" => Play::Rock,
-                "Y" => Play::Paper,
-                "Z" => Play::Scissors,
+                "A" | "X" => Play::Rock,
+                "B" | "Y" => Play::Paper,
+                "C" | "Z" => Play::Scissors,
                 _ => panic!(),
             }
         }
@@ -73,9 +70,9 @@ mod RPS {
                 Result::Tie
             } else {
                 match (&self.opponent, &self.me) {
-                    (Play::Rock, Play::Scissors) => Result::Loss,
-                    (Play::Paper, Play::Rock) => Result::Loss,
-                    (Play::Scissors, Play::Paper) => Result::Loss,
+                    (Play::Rock, Play::Scissors)
+                    | (Play::Paper, Play::Rock)
+                    | (Play::Scissors, Play::Paper) => Result::Loss,
                     _ => Result::Win,
                 }
             }

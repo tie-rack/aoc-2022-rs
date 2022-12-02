@@ -21,7 +21,7 @@ fn day1part1(loads: &[i32]) -> i32 {
 #[aoc(day1, part2)]
 fn day1part2(loads: &[i32]) -> i32 {
     let loads = &mut loads.to_owned();
-    loads.sort();
+    loads.sort_unstable();
     loads.reverse();
     loads.iter().take(3).sum()
 }
