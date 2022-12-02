@@ -1,132 +1,135 @@
 use aoc_runner_derive::{aoc, aoc_generator};
 
-#[derive(Debug, PartialEq, Clone, Copy)]
-enum RPSPlay {
-    Rock,
-    Paper,
-    Scissors,
-}
-
-impl RPSPlay {
-    fn score(&self) -> i32 {
-        match &self {
-            &RPSPlay::Rock => 1,
-            &RPSPlay::Paper => 2,
-            &RPSPlay::Scissors => 3,
-        }
+#[allow(non_snake_case)]
+mod RPS {
+    #[derive(Debug, PartialEq, Clone, Copy)]
+    pub enum Play {
+        Rock,
+        Paper,
+        Scissors,
     }
-}
 
-impl From<&str> for RPSPlay {
-    fn from(s: &str) -> Self {
-        match s {
-            "A" => RPSPlay::Rock,
-            "B" => RPSPlay::Paper,
-            "C" => RPSPlay::Scissors,
-            "X" => RPSPlay::Rock,
-            "Y" => RPSPlay::Paper,
-            "Z" => RPSPlay::Scissors,
-            _ => panic!(),
-        }
-    }
-}
-
-#[derive(Debug, PartialEq)]
-enum RPSResult {
-    Win,
-    Loss,
-    Tie,
-}
-
-impl RPSResult {
-    fn score(&self) -> i32 {
-        match &self {
-            RPSResult::Win => 6,
-            RPSResult::Tie => 3,
-            RPSResult::Loss => 0,
-        }
-    }
-}
-
-impl From<&str> for RPSResult {
-    fn from(s: &str) -> Self {
-        match s {
-            "X" => RPSResult::Loss,
-            "Y" => RPSResult::Tie,
-            "Z" => RPSResult::Win,
-            _ => panic!(),
-        }
-    }
-}
-
-#[derive(Debug, PartialEq)]
-pub struct RPSRound {
-    opponent: RPSPlay,
-    me: RPSPlay,
-}
-
-impl RPSRound {
-    fn round_result(&self) -> RPSResult {
-        if &self.opponent == &self.me {
-            RPSResult::Tie
-        } else {
-            match (&self.opponent, &self.me) {
-                (RPSPlay::Rock, RPSPlay::Scissors) => RPSResult::Loss,
-                (RPSPlay::Paper, RPSPlay::Rock) => RPSResult::Loss,
-                (RPSPlay::Scissors, RPSPlay::Paper) => RPSResult::Loss,
-                _ => RPSResult::Win,
+    impl Play {
+        pub fn score(&self) -> i32 {
+            match &self {
+                &Play::Rock => 1,
+                &Play::Paper => 2,
+                &Play::Scissors => 3,
             }
         }
     }
 
-    fn score(&self) -> i32 {
-        &self.me.score() + &self.round_result().score()
-    }
-}
-
-impl From<&RPSRoundStrategy> for RPSRound {
-    fn from(strat: &RPSRoundStrategy) -> Self {
-        RPSRound {
-            opponent: strat.opponent,
-            me: strat.my_play(),
+    impl From<&str> for Play {
+        fn from(s: &str) -> Self {
+            match s {
+                "A" => Play::Rock,
+                "B" => Play::Paper,
+                "C" => Play::Scissors,
+                "X" => Play::Rock,
+                "Y" => Play::Paper,
+                "Z" => Play::Scissors,
+                _ => panic!(),
+            }
         }
     }
-}
 
-pub struct RPSRoundStrategy {
-    opponent: RPSPlay,
-    res: RPSResult,
-}
+    #[derive(Debug, PartialEq)]
+    pub enum Result {
+        Win,
+        Loss,
+        Tie,
+    }
 
-impl RPSRoundStrategy {
-    fn my_play(&self) -> RPSPlay {
-        match self.res {
-            RPSResult::Tie => self.opponent,
-            RPSResult::Win => match self.opponent {
-                RPSPlay::Rock => RPSPlay::Paper,
-                RPSPlay::Paper => RPSPlay::Scissors,
-                RPSPlay::Scissors => RPSPlay::Rock,
-            },
-            RPSResult::Loss => match self.opponent {
-                RPSPlay::Rock => RPSPlay::Scissors,
-                RPSPlay::Paper => RPSPlay::Rock,
-                RPSPlay::Scissors => RPSPlay::Paper,
-            },
+    impl Result {
+        pub fn score(&self) -> i32 {
+            match &self {
+                Result::Win => 6,
+                Result::Tie => 3,
+                Result::Loss => 0,
+            }
+        }
+    }
+
+    impl From<&str> for Result {
+        fn from(s: &str) -> Self {
+            match s {
+                "X" => Result::Loss,
+                "Y" => Result::Tie,
+                "Z" => Result::Win,
+                _ => panic!(),
+            }
+        }
+    }
+
+    #[derive(Debug, PartialEq)]
+    pub struct Round {
+        pub opponent: Play,
+        pub me: Play,
+    }
+
+    impl Round {
+        pub fn round_result(&self) -> Result {
+            if &self.opponent == &self.me {
+                Result::Tie
+            } else {
+                match (&self.opponent, &self.me) {
+                    (Play::Rock, Play::Scissors) => Result::Loss,
+                    (Play::Paper, Play::Rock) => Result::Loss,
+                    (Play::Scissors, Play::Paper) => Result::Loss,
+                    _ => Result::Win,
+                }
+            }
+        }
+
+        pub fn score(&self) -> i32 {
+            &self.me.score() + &self.round_result().score()
+        }
+    }
+
+    impl From<&RoundStrategy> for Round {
+        fn from(strat: &RoundStrategy) -> Self {
+            Round {
+                opponent: strat.opponent,
+                me: strat.my_play(),
+            }
+        }
+    }
+
+    pub struct RoundStrategy {
+        pub opponent: Play,
+        pub res: Result,
+    }
+
+    impl RoundStrategy {
+        fn my_play(&self) -> Play {
+            match self.res {
+                Result::Tie => self.opponent,
+                Result::Win => match self.opponent {
+                    Play::Rock => Play::Paper,
+                    Play::Paper => Play::Scissors,
+                    Play::Scissors => Play::Rock,
+                },
+                Result::Loss => match self.opponent {
+                    Play::Rock => Play::Scissors,
+                    Play::Paper => Play::Rock,
+                    Play::Scissors => Play::Paper,
+                },
+            }
         }
     }
 }
 
 #[aoc_generator(day2, part1)]
-pub fn parse_rps_strategy(input: &str) -> Vec<RPSRound> {
+pub fn parse_rps_strategy(input: &str) -> Vec<RPS::Round> {
     input
         .lines()
         .map(|l| {
             let mut plays = l.split(' ');
             let opp = plays.next().unwrap();
             let me = plays.next().unwrap();
-            RPSRound {
-                opponent: RPSPlay::from(opp),
-                me: RPSPlay::from(me),
+            RPS::Round {
+                opponent: RPS::Play::from(opp),
+                me: RPS::Play::from(me),
             }
         })
         .collect()
@@ -134,31 +137,31 @@ pub fn parse_rps_strategy(input: &str) -> Vec<RPSRound> {
 
 #[aoc_generator(day2, part2)]
 #[allow(non_snake_case)]
-pub fn parse_rps_strategy_FINAL(input: &str) -> Vec<RPSRoundStrategy> {
+pub fn parse_rps_strategy_FINAL(input: &str) -> Vec<RPS::RoundStrategy> {
     input
         .lines()
         .map(|l| {
             let mut plays = l.split(' ');
             let opp = plays.next().unwrap();
             let res = plays.next().unwrap();
-            RPSRoundStrategy {
-                opponent: RPSPlay::from(opp),
-                res: RPSResult::from(res),
+            RPS::RoundStrategy {
+                opponent: RPS::Play::from(opp),
+                res: RPS::Result::from(res),
             }
         })
         .collect()
 }
 
 #[aoc(day2, part1)]
-fn day2part1(rounds: &Vec<RPSRound>) -> i32 {
+fn day2part1(rounds: &Vec<RPS::Round>) -> i32 {
     rounds.iter().fold(0, |acc, r| acc + r.score())
 }
 
 #[aoc(day2, part2)]
-fn day2part2(rounds: &Vec<RPSRoundStrategy>) -> i32 {
+fn day2part2(rounds: &Vec<RPS::RoundStrategy>) -> i32 {
     rounds
         .iter()
-        .map(|strat| RPSRound::from(strat))
+        .map(|strat| RPS::Round::from(strat))
         .fold(0, |acc, r| acc + r.score())
 }
 
@@ -168,9 +171,9 @@ mod tests {
 
     #[test]
     fn test_rps_scores() {
-        assert_eq!(RPSPlay::Rock.score(), 1);
-        assert_eq!(RPSPlay::Paper.score(), 2);
-        assert_eq!(RPSPlay::Scissors.score(), 3);
+        assert_eq!(RPS::Play::Rock.score(), 1);
+        assert_eq!(RPS::Play::Paper.score(), 2);
+        assert_eq!(RPS::Play::Scissors.score(), 3);
     }
 
     const INPUT: &str = "A Y
@@ -183,17 +186,17 @@ C Z";
         assert_eq!(
             rounds,
             vec![
-                RPSRound {
-                    opponent: RPSPlay::Rock,
-                    me: RPSPlay::Paper
+                RPS::Round {
+                    opponent: RPS::Play::Rock,
+                    me: RPS::Play::Paper
                 },
-                RPSRound {
-                    opponent: RPSPlay::Paper,
-                    me: RPSPlay::Rock
+                RPS::Round {
+                    opponent: RPS::Play::Paper,
+                    me: RPS::Play::Rock
                 },
-                RPSRound {
-                    opponent: RPSPlay::Scissors,
-                    me: RPSPlay::Scissors
+                RPS::Round {
+                    opponent: RPS::Play::Scissors,
+                    me: RPS::Play::Scissors
                 },
             ]
         );
@@ -203,9 +206,9 @@ C Z";
     fn test_results() {
         let rounds = parse_rps_strategy(INPUT);
         let mut results = rounds.iter().map(|r| r.round_result());
-        assert_eq!(results.next(), Some(RPSResult::Win));
-        assert_eq!(results.next(), Some(RPSResult::Loss));
-        assert_eq!(results.next(), Some(RPSResult::Tie));
+        assert_eq!(results.next(), Some(RPS::Result::Win));
+        assert_eq!(results.next(), Some(RPS::Result::Loss));
+        assert_eq!(results.next(), Some(RPS::Result::Tie));
         assert_eq!(results.next(), None);
     }
 
