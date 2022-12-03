@@ -51,7 +51,7 @@ where
                 acc
             })
     })
-    .unwrap()
+    .unwrap_or_default()
 }
 
 #[aoc_generator(day3, part2)]
