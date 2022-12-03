@@ -1,5 +1,5 @@
 use aoc_runner_derive::{aoc, aoc_generator};
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 fn rucksack_split(contents: &str) -> (&str, &str) {
     contents.split_at(contents.len() / 2)
@@ -31,23 +31,27 @@ fn compartment_priorities(input: &str) -> Vec<u32> {
         .collect()
 }
 
-// One char will appear once in each group
-// Not the most efficient implementation.
 fn group_badge(groups: &[&str]) -> char {
-    let mut counts = HashMap::<char, u8>::new();
-    for group in groups {
-        for item in group.chars().collect::<HashSet<char>>() {
-            let count = counts.entry(item).or_insert(0);
-            *count += 1;
-        }
-    }
-    let mut badge: Option<char> = None;
-    for (c, n) in counts {
-        if n == 3 {
-            badge = Some(c);
-        }
-    }
-    badge.unwrap()
+    intersect_sets(groups.iter().map(|g| g.chars().collect::<HashSet<char>>()))
+        .into_iter()
+        .next()
+        .unwrap()
+}
+
+fn intersect_sets<T>(sets: impl Iterator<Item = HashSet<T>>) -> HashSet<T>
+where
+    T: Eq,
+    T: std::hash::Hash,
+    T: Copy,
+{
+    sets.reduce(|left, right| {
+        left.intersection(&right)
+            .fold(HashSet::<T>::new(), |mut acc, t| {
+                acc.insert(*t);
+                acc
+            })
+    })
+    .unwrap()
 }
 
 #[aoc_generator(day3, part2)]
