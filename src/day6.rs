@@ -13,24 +13,23 @@ fn is_all_different<T: Eq + Hash>(window: impl Iterator<Item = T>) -> bool {
     set.len() == expected_length
 }
 
-#[aoc(day6, part1)]
-fn find_start_of_packet(stream: &str) -> usize {
-    for (i, window) in Vec::from(stream).windows(4).enumerate() {
+fn find_start(stream: &str, marker_length: usize) -> usize {
+    for (i, window) in Vec::from(stream).windows(marker_length).enumerate() {
         if is_all_different(window.iter()) {
-            return 4 + i;
+            return marker_length + i;
         }
     }
-    panic!("No start of stream!")
+    panic!("No marker found!")
+}
+
+#[aoc(day6, part1)]
+fn find_start_of_packet(stream: &str) -> usize {
+    find_start(stream, 4)
 }
 
 #[aoc(day6, part2)]
 fn find_start_of_message(stream: &str) -> usize {
-    for (i, window) in Vec::from(stream).windows(14).enumerate() {
-        if is_all_different(window.iter()) {
-            return 14 + i;
-        }
-    }
-    panic!("No start of message!")
+    find_start(stream, 14)
 }
 
 #[cfg(test)]
