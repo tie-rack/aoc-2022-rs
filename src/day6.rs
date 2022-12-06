@@ -17,11 +17,10 @@ fn find_start(stream: &str, marker_length: usize) -> usize {
             for _ in 0..dup_i {
                 ring.pop_front();
             }
-        }
-        ring.push_back(c);
-        if ring.len() == marker_length {
+        } else if dup_i == marker_length - 1{
             return i + 1;
         }
+        ring.push_back(c);
     }
     panic!("No marker found!")
 }
