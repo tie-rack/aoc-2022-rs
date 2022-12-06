@@ -5,24 +5,22 @@ fn find_start(stream: &str, marker_length: usize) -> usize {
     let mut ring = VecDeque::with_capacity(marker_length - 1);
     let mut refreshing = true;
     for (i, c) in stream.chars().enumerate() {
+        while ring.contains(&c) {
+            ring.pop_front();
+        }
         if refreshing {
-            while ring.contains(&c) {
-                ring.pop_front();
-            }
             ring.push_back(c);
             if ring.len() == marker_length - 1 {
                 refreshing = false;
             }
-        } else if ring.contains(&c) {
-            while ring.contains(&c) {
-                ring.pop_front();
+        } else {
+            if ring.len() == marker_length - 1 {
+                return i + 1;
             }
             ring.push_back(c);
             if ring.len() < marker_length - 1 {
                 refreshing = true;
             }
-        } else {
-            return i + 1;
         }
     }
     panic!("No marker found!")
