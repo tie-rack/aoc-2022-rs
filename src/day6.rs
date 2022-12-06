@@ -4,8 +4,19 @@ use std::collections::VecDeque;
 fn find_start(stream: &str, marker_length: usize) -> usize {
     let mut ring = VecDeque::with_capacity(marker_length);
     for (i, c) in stream.chars().enumerate() {
-        while ring.contains(&c) {
-            ring.pop_front();
+        let mut dup_i = 0;
+        let mut drop_dupe = false;
+        for possible_dup in &ring {
+            dup_i += 1;
+            if possible_dup == &c {
+                drop_dupe = true;
+                break;
+            }
+        }
+        if drop_dupe {
+            for _ in 0..dup_i {
+                ring.pop_front();
+            }
         }
         ring.push_back(c);
         if ring.len() == marker_length {
