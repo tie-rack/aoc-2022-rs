@@ -30,7 +30,7 @@ fn find_start_of_message(stream: &str) -> usize {
             return 14 + i;
         }
     }
-    panic!("No start of stream!")
+    panic!("No start of message!")
 }
 
 #[cfg(test)]
