@@ -2,23 +2,22 @@ use aoc_runner_derive::aoc;
 use std::collections::VecDeque;
 
 fn find_start(stream: &str, marker_length: usize) -> usize {
-    let mut ring = VecDeque::with_capacity(marker_length - 1);
+    let mut ring = VecDeque::with_capacity(marker_length);
     let mut refreshing = true;
     for (i, c) in stream.chars().enumerate() {
         while ring.contains(&c) {
             ring.pop_front();
         }
+        ring.push_back(c);
+        if ring.len() == marker_length {
+            return i + 1;
+        }
         if refreshing {
-            ring.push_back(c);
             if ring.len() == marker_length - 1 {
                 refreshing = false;
             }
         } else {
-            if ring.len() == marker_length - 1 {
-                return i + 1;
-            }
-            ring.push_back(c);
-            if ring.len() < marker_length - 1 {
+            if ring.len() < marker_length {
                 refreshing = true;
             }
         }
