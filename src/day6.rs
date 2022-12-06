@@ -1,23 +1,28 @@
 use aoc_runner_derive::aoc;
-use std::cmp::Eq;
-use std::collections::HashSet;
-use std::hash::Hash;
-
-fn is_all_different<T: Eq + Hash>(window: impl Iterator<Item = T>) -> bool {
-    let mut set = HashSet::new();
-    for i in window {
-        if set.contains(&i) {
-            return false
-        }
-        set.insert(i);
-    }
-    true
-}
+use std::collections::VecDeque;
 
 fn find_start(stream: &str, marker_length: usize) -> usize {
-    for (i, window) in Vec::from(stream).windows(marker_length).enumerate() {
-        if is_all_different(window.iter()) {
-            return marker_length + i;
+    let mut ring = VecDeque::with_capacity(marker_length - 1);
+    let mut refreshing = true;
+    for (i, c) in stream.chars().enumerate() {
+        if refreshing {
+            while ring.contains(&c) {
+                ring.pop_front();
+            }
+            ring.push_back(c);
+            if ring.len() == marker_length - 1 {
+                refreshing = false;
+            }
+        } else if ring.contains(&c) {
+            while ring.contains(&c) {
+                ring.pop_front();
+            }
+            ring.push_back(c);
+            if ring.len() < marker_length - 1 {
+                refreshing = true;
+            }
+        } else {
+            return i + 1;
         }
     }
     panic!("No marker found!")
@@ -42,6 +47,7 @@ mod tests {
     const INPUT3: &str = "nppdvjthqldpwncqszvftbrmjlhg";
     const INPUT4: &str = "nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg";
     const INPUT5: &str = "zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw";
+    const INPUT6: &str = "abcccdeccfghijklmnopqrstuvwxyz";
 
     #[test]
     fn test_find_start_of_packet() {
@@ -50,6 +56,7 @@ mod tests {
         assert_eq!(6, find_start_of_packet(&INPUT3));
         assert_eq!(10, find_start_of_packet(&INPUT4));
         assert_eq!(11, find_start_of_packet(&INPUT5));
+        assert_eq!(12, find_start_of_packet(&INPUT6));
     }
 
     #[test]
