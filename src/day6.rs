@@ -2,11 +2,11 @@ use aoc_runner_derive::aoc;
 use std::collections::VecDeque;
 
 fn find_start(stream: &str, marker_length: usize) -> usize {
-    let mut ring = VecDeque::with_capacity(marker_length);
+    let mut buf = VecDeque::with_capacity(marker_length);
     for (i, c) in stream.chars().enumerate() {
         let mut dup_i = 0;
         let mut drop_dupe = false;
-        for possible_dup in &ring {
+        for possible_dup in &buf {
             dup_i += 1;
             if possible_dup == &c {
                 drop_dupe = true;
@@ -15,12 +15,12 @@ fn find_start(stream: &str, marker_length: usize) -> usize {
         }
         if drop_dupe {
             for _ in 0..dup_i {
-                ring.pop_front();
+                buf.pop_front();
             }
         } else if dup_i == marker_length - 1{
             return i + 1;
         }
-        ring.push_back(c);
+        buf.push_back(c);
     }
     panic!("No marker found!")
 }
