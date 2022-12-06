@@ -5,12 +5,13 @@ use std::hash::Hash;
 
 fn is_all_different<T: Eq + Hash>(window: impl Iterator<Item = T>) -> bool {
     let mut set = HashSet::new();
-    let mut expected_length = 0;
     for i in window {
+        if set.contains(&i) {
+            return false
+        }
         set.insert(i);
-        expected_length += 1;
     }
-    set.len() == expected_length
+    true
 }
 
 fn find_start(stream: &str, marker_length: usize) -> usize {
