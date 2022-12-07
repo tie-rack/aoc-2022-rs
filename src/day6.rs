@@ -28,7 +28,7 @@ fn find_start(stream: &str, marker_length: usize) -> usize {
             for _ in 0..dup_i {
                 buf.pop_front();
             }
-        } else if dup_i == marker_length - 1{
+        } else if dup_i == marker_length - 1 {
             return i + 1;
         }
         buf.push_back(c);
